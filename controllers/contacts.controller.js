@@ -3,7 +3,18 @@ import { Contact } from '../models/contact.model.js';
 
 export const getAllContacts = async (req, res) => {
 	try {
-		const contacts = await Contact.find();
+		const { name, email } = req.query;
+		let query = {};
+
+		if (name) {
+			query.name = { $regex: name, $options: 'i' };
+		}
+
+		if (email) {
+			query.email = { $regex: email, $options: 'i' };
+		}
+
+		const contacts = await Contact.find(query);
 
 		res.status(200).send({ contacts });
 	} catch (err) {
